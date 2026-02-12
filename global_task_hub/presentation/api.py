@@ -14,7 +14,17 @@ from global_task_hub.application.use_cases import (
 )
 from global_task_hub.domain.interfaces import TaskEventPublisher
 
-app = FastAPI(title="GlobalTaskHub API")
+from contextlib import asynccontextmanager
+from global_task_hub.infrastructure.database import Base, engine
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="GlobalTaskHub API", lifespan=lifespan)
 
 import os
 

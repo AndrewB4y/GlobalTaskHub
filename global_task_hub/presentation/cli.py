@@ -3,6 +3,8 @@ from rich.console import Console
 from rich.table import Table
 
 from global_task_hub.infrastructure.database import (
+    Base,
+    engine,
     SQLAlchemyTaskRepository,
     SessionLocal,
 )
@@ -19,6 +21,13 @@ console = Console()
 def get_repository():
     db = SessionLocal()
     return SQLAlchemyTaskRepository(db)
+
+
+@app.command()
+def init_db():
+    """Initialize the database tables."""
+    Base.metadata.create_all(bind=engine)
+    console.print("[green]Database initialized successfully![/green]")
 
 
 @app.command()
